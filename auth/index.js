@@ -20,11 +20,10 @@ const check = {
         console.log(decoded);
         // comprobar si es o no propio
         if (decoded.id !== owner) {
-            throw error('No puedes actualizar, no tienes permisos', 401);
+            throw error('No tienes permisos', 401);
         }
     },
     logged: function (req) {
-        // eslint-disable-next-line no-unused-vars
         const decoded = decodeHeader(req);
     }
 }

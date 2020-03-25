@@ -1,11 +1,12 @@
 const express = require('express');
+const secure = require('./secure');
 
 const router = express.Router();
 const controller = require('./index');
 
 // Routes
 router.get('/', list);
-router.get('/:id', get);
+router.get('/:id', secure('access'), get);
 router.post('/', insert);
 router.delete('/:id', deleteUser);
 
