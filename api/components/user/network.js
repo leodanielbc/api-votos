@@ -1,5 +1,6 @@
 const express = require('express');
 const secure = require('./secure');
+const response = require('../../../network/response');
 
 const router = express.Router();
 const controller = require('./index');
@@ -14,64 +15,29 @@ router.delete('/:id', deleteUser);
 function list(req, res, next) {
     controller.list()
         .then((lista) => {
-            res.status(200).json({
-                status: 200,
-                message: 'user listed',
-                body: lista
-            });
+            response.success(req, res, lista, 200);
         })
-        .catch((err) => {
-            res.status(500).json({
-                status: 500,
-                message: 'Error'
-            });
-        });
+        .catch(next);
 }
 function get(req, res, next) {
     controller.getId(req.params.id)
         .then((user) => {
-            res.status(200).json({
-                status: 200,
-                message: 'get user',
-                body: user
-            });
+            response.success(req, res, user, 200);
         })
-        .catch((err) => {
-            res.status(500).json({
-                status: 500,
-                message: 'Error'
-            });
-        });
+        .catch(next);
 }
 function insert(req, res, next) {
     controller.insert(req.body)
         .then((user) => {
-            res.status(200).json({
-                status: 200,
-                message: 'success insert',
-                body: user
-            });
+            response.success(req, res, user, 200);
         })
-        .catch((err) => {
-            res.status(500).json({
-                status: 500,
-                message: 'Error'
-            });
-        });
+        .catch(next);
 }
 function deleteUser(req, res, next) {
     controller.deleteUser(req.params.id)
         .then((user) => {
-            res.status(200).json({
-                status: 200,
-                message: 'success deleted'
-            });
+            response.success(req, res, user, 200);
         })
-        .catch((err) => {
-            res.status(500).json({
-                status: 500,
-                message: 'Error'
-            });
-        });
+        .catch(next);
 }
 module.exports = router;

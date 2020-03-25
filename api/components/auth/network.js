@@ -1,7 +1,9 @@
 const express = require('express');
 
-const router = express.Router();
+const response = require('../../../network/response');
 const controller = require('./index');
+
+const router = express.Router();
 
 // Routes
 router.post('/login', login);
@@ -10,18 +12,10 @@ router.post('/login', login);
 function login(req, res, next) {
     controller.login(req.body.email, req.body.password)
         .then((data) => {
-            res.status(200).json({
-                status: 200,
-                message: 'success auth',
-                body: data
-            });
+            delete data.user.password;
+            response.success(req, res, data, 200);
         })
-        .catch((err) => {
-            res.status(400).json({
-                status: 400,
-                message: 'Error Information'
-            });
-        });
+        .catch(next);
 }
 
 module.exports = router;

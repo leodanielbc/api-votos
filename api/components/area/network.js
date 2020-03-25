@@ -1,4 +1,5 @@
 const express = require('express');
+const response = require('../../../network/response');
 
 const router = express.Router();
 const controller = require('./index');
@@ -13,64 +14,29 @@ router.delete('/:id', deleteArea);
 function list(req, res, next) {
     controller.list()
         .then((lista) => {
-            res.status(200).json({
-                status: 200,
-                message: 'area listed',
-                body: lista
-            });
+            response.success(req, res, lista, 200);
         })
-        .catch((err) => {
-            res.status(500).json({
-                status: 500,
-                message: 'Error'
-            });
-        });
+        .catch(next);
 }
 function get(req, res, next) {
     controller.getId(req.params.id)
         .then((area) => {
-            res.status(200).json({
-                status: 200,
-                message: 'get area',
-                body: area
-            });
+            response.success(req, res, area, 200);
         })
-        .catch((err) => {
-            res.status(500).json({
-                status: 500,
-                message: 'Error'
-            });
-        });
+        .catch(next);
 }
 function insert(req, res, next) {
     controller.insert(req.body)
         .then((area) => {
-            res.status(200).json({
-                status: 200,
-                message: 'success insert',
-                body: area
-            });
+            response.success(req, res, area, 200);
         })
-        .catch((err) => {
-            res.status(500).json({
-                status: 500,
-                message: 'Error'
-            });
-        });
+        .catch(next);
 }
 function deleteArea(req, res, next) {
     controller.deleteArea(req.params.id)
         .then((area) => {
-            res.status(200).json({
-                status: 200,
-                message: 'success deleted'
-            });
+            response.success(req, res, area, 200);
         })
-        .catch((err) => {
-            res.status(500).json({
-                status: 500,
-                message: 'Error'
-            });
-        });
+        .catch(next);
 }
 module.exports = router;

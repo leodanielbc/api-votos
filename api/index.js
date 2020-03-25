@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const errors = require('../network/errors');
 
 const config = require('../config.js');
 const user = require('./components/user/network');
@@ -14,6 +15,9 @@ app.use(bodyParser.json());
 app.use('/api/user', user);
 app.use('/api/area', area);
 app.use('/api/auth', auth);
+
+// middleware errors
+app.use(errors);
 
 app.listen(config.api.port, () => {
     // eslint-disable-next-line no-console
