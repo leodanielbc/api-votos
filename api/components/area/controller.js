@@ -1,6 +1,5 @@
-const TABLE = 'user';
+const TABLE = 'area';
 const nanoid = require('nanoid');
-const auth = require('../auth')
 
 module.exports = function (injectedStore) {
     let store = injectedStore;
@@ -14,23 +13,14 @@ module.exports = function (injectedStore) {
         return store.get(TABLE, id);
     }
     function insert(body) {
-        const user = {
+        const area = {
             id: nanoid(),
-            name: body.name,
-            lastname: body.lastname,
-            email: body.email,
-            password: body.password,
-            idarea: body.idarea
+            nameArea: body.nameArea,
+            description: body.description
         }
-        const authdata = {
-            email: user.email,
-            password: user.password,
-            user_id: user.id
-        }
-        auth.insert(authdata);
-        return store.insert(TABLE, user);
+        return store.insert(TABLE, area);
     }
-    function deleteUser(id) {
+    function deleteArea(id) {
         return store.deleteElement(TABLE, id);
     }
 
@@ -38,6 +28,6 @@ module.exports = function (injectedStore) {
         list,
         getId,
         insert,
-        deleteUser
+        deleteArea
     }
 }

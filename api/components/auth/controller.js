@@ -1,11 +1,20 @@
-const TABLE = 'user';
+const TABLE = 'auth';
 const nanoid = require('nanoid');
-const auth = require('../auth')
+const auth = require('../../../auth');
 
 module.exports = function (injectedStore) {
     let store = injectedStore;
     if (!store) {
         store = require('../../../store/dummy');
+    }
+    async function login(email, password) {
+        const data = await store.query(TABLE, { email: email });
+        if (data.password === password) {
+            // generate token
+            return auth.sign(data);
+        } else {
+            throw new Error('information invalid');
+        }
     }
     function list() {
         return store.list(TABLE);
@@ -14,23 +23,15 @@ module.exports = function (injectedStore) {
         return store.get(TABLE, id);
     }
     function insert(body) {
-        const user = {
+        const auth = {
             id: nanoid(),
-            name: body.name,
-            lastname: body.lastname,
             email: body.email,
             password: body.password,
-            idarea: body.idarea
+            user_id: body.user_id
         }
-        const authdata = {
-            email: user.email,
-            password: user.password,
-            user_id: user.id
-        }
-        auth.insert(authdata);
-        return store.insert(TABLE, user);
+        return store.insert(TABLE, auth);
     }
-    function deleteUser(id) {
+    function deleteAuth(id) {
         return store.deleteElement(TABLE, id);
     }
 
@@ -38,6 +39,7 @@ module.exports = function (injectedStore) {
         list,
         getId,
         insert,
-        deleteUser
+        deleteAuth,
+        login
     }
 }
