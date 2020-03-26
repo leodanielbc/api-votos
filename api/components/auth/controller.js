@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 module.exports = function (injectedStore) {
     let store = injectedStore;
     if (!store) {
-        store = require('../../../store/dummy');
+        store = require('../../../store/mysql');
     }
     async function login(email, password) {
         const data = await store.query(TABLE, { email: email });

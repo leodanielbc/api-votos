@@ -1,4 +1,4 @@
-const TABLE = 'area';
+const TABLE = 'rol';
 const nanoid = require('nanoid');
 
 module.exports = function (injectedStore) {
@@ -12,23 +12,30 @@ module.exports = function (injectedStore) {
     function getId(id) {
         return store.get(TABLE, id);
     }
-    function insert(body) {
-        const area = {
+    async function insert(body) {
+        const rol = {
             id: nanoid(),
-            codeArea: body.codeArea,
-            nameArea: body.nameArea,
+            namerol: body.namerol,
             description: body.description
         }
-        return store.insert(TABLE, area);
+        return store.insert(TABLE, rol);
     }
-    function deleteArea(id) {
+    function deleteRol(id) {
         return store.deleteElement(TABLE, id);
+    }
+
+    function addRolUser(user, rol) {
+        return store.insert('user_'+ TABLE , {
+            rol_id: rol,
+            user_id: user,
+        });
     }
 
     return {
         list,
         getId,
         insert,
-        deleteArea
+        deleteRol,
+        addRolUser
     }
 }

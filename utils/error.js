@@ -1,4 +1,4 @@
-function error(message, code) {
+async function error(message, code) {
     let e = new Error(message);
 
     if (code) {

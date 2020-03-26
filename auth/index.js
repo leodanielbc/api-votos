@@ -2,7 +2,10 @@ const jwt = require('jsonwebtoken');
 const config = require('../config');
 const error = require('../utils/error');
 
+const store = require('../store/mysql');
+
 const secret = config.jwt.secret;
+const boom = require('@hapi/boom');
 
 
 // firmar el token
@@ -23,8 +26,18 @@ const check = {
             throw error('No tienes permisos', 401);
         }
     },
-    logged: function (req) {
+    logged: function (req, next) {
         const decoded = decodeHeader(req);
+        store.userjoinrol(decoded.user_id).then((data) => {
+            let userValid = data.filter(item => item.namerol === 'admin');
+            console.log(data);
+            if (userValid.length === 0) {
+                next(boom.unauthorized());
+            }
+            if (userValid[0].namerol !== 'admin') {
+                next(boom.unauthorized());
+            }
+        });
     }
 }
 

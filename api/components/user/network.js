@@ -6,10 +6,10 @@ const router = express.Router();
 const controller = require('./index');
 
 // Routes
-router.get('/', list);
+router.get('/', secure('access'), list);
 router.get('/:id', secure('access'), get);
-router.post('/', insert);
-router.delete('/:id', deleteUser);
+router.post('/', secure('access'), insert);
+router.delete('/:id', secure('access'), deleteUser);
 
 // Internal functions
 function list(req, res, next) {

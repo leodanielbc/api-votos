@@ -1,11 +1,12 @@
 const TABLE = 'user';
 const nanoid = require('nanoid');
-const auth = require('../auth')
+const auth = require('../auth');
+const rol = require('../rol')
 
 module.exports = function (injectedStore) {
     let store = injectedStore;
     if (!store) {
-        store = require('../../../store/dummy');
+        store = require('../../../store/mysql');
     }
     function list() {
         return store.list(TABLE);
@@ -13,22 +14,21 @@ module.exports = function (injectedStore) {
     function getId(id) {
         return store.get(TABLE, id);
     }
-    function insert(body) {
+    async function insert(body) {
         const user = {
             id: nanoid(),
             name: body.name,
             lastname: body.lastname,
             email: body.email,
-            password: body.password,
             idarea: body.idarea
         }
-        const authdata = {
+        await store.insert(TABLE, user);
+        await auth.insert({
             email: user.email,
-            password: user.password,
+            password: body.password,
             user_id: user.id
-        }
-        auth.insert(authdata);
-        return store.insert(TABLE, user);
+        });
+        return rol.addRolUser(user.id, body.idrol);
     }
     function deleteUser(id) {
         return store.deleteElement(TABLE, id);
