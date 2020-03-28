@@ -157,10 +157,11 @@ function listUserIdVotos(table, id) {
             });
     });
 }
-function lastElement(table, iduser) {
+function lastElement(table, iduser, iduservoto) {
     return new Promise((resolve, reject) => {
         connection.query(
-            `SELECT MAX('${iduser}') AS id FROM ${table}`,
+            `SELECT * FROM ${table} WHERE iduser='${iduser}'
+            AND fecha = (SELECT MAX(fecha) FROM ${table} WHERE iduservoto='${iduservoto}')`,
             (err, data) => {
                 if (err) return reject(err);
                 resolve(data);

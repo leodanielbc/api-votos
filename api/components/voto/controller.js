@@ -2,6 +2,8 @@ const TABLE = 'voto';
 const nanoid = require('nanoid');
 const auth = require('../../../auth');
 const bcrypt = require('bcrypt');
+const moment = require('moment');
+const boom = require('@hapi/boom');
 TABLE_USER = 'user';
 
 module.exports = function (injectedStore) {
@@ -27,13 +29,25 @@ module.exports = function (injectedStore) {
             iduservoto: body.iduservoto,
             iduser: body.iduser
         }
-        // obtenemos el ultimo voto del usuario
-        const lastUserVoto = await store.lastElement(TABLE, voto.iduser);
-        const element = await store.query(TABLE, {iduser: lastUserVoto[0].id})
-        console.log('ok');
-        console.log(element);
-        //return store.insert(TABLE, voto);
+        // obtenemos el ultimo voto que realizo (iduservoto) a dicho usuario (iduser)
+        const lastUserVoto = await store.lastElement(TABLE, voto.iduser, voto.iduservoto);
+        //const lastUserVoto = await store.lastElement(TABLE, '111', '11');
+        const element = lastUserVoto[0];
+        const hoy = moment();
+        if (!element) {
+            await store.insert(TABLE, voto);
+            return { message: 'Su voto ha sido registrado' };
+        }
+        const dateVoto = moment(element.fecha);
+        // verifica que puede votar una vez al mes
+        if (hoy.format("MM") > dateVoto.format("MM")) {
+            await store.insert(TABLE, voto);
+            return { message: 'Su voto ha sido registrado' }
+        } else {
+            return boom.notAcceptable('No puedes votar mas de una vez en el mes');
+        }
     }
+
     function deleteAuth(id) {
         return store.deleteElement(TABLE, id);
     }

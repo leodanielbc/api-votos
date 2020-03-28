@@ -16,6 +16,11 @@ module.exports = function checkAuth(action) {
                 auth.check.logged(req, next);
                 next();
                 break;
+            case 'accessemployee':
+                // verificar si tiene los permisos
+                auth.check.logged_employee(req, next);
+                next();
+                break;
             case 'checktoken':
                 // verificar el token (si esta o no logueado)
                 auth.check.logged(req);

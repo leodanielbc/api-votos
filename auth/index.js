@@ -38,7 +38,26 @@ const check = {
                 next(boom.unauthorized());
             }
         });
-    }
+    },
+    logged_employee: function (req, next) {
+        const decoded = decodeHeader(req);
+        store.userjoinrol(decoded.user_id).then((data) => {
+            let userValidEmployee = data.filter(item => item.namerol === 'employee');
+            let userValidAdmin = data.filter(item => item.namerol === 'admin');
+
+            // console.log(data);
+            if (userValidAdmin.length === 0 && userValidEmployee.length === 0) {
+                next(boom.unauthorized());
+            }
+            if(userValidEmployee.length > 0){
+                return;
+            } else if (userValidAdmin.length > 0) {
+                return;
+            } else {
+                next(boom.unauthorized());
+            }
+        });
+    },
 }
 
 function getToken(auth) {

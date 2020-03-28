@@ -7,7 +7,7 @@ const controller = require('./index');
 const router = express.Router();
 
 // Routes
-router.post('/', secure('access'), votar);
+router.post('/', secure('accessemployee'), votar);
 router.get('/', secure('access'), list);
 router.get('/:id', secure('access'), get);
 
