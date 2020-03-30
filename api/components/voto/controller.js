@@ -54,6 +54,9 @@ module.exports = function (injectedStore) {
     function betweenDateNumVotos(date1, date2){
         return store.listBetweenDateVotos(date1, date2);
     }
+    function listEmpleadosVotosForArea(idarea, date1, date2){
+        return store.listVotosForArea(idarea, date1, date2);
+    }
 
     function deleteAuth(id) {
         return store.deleteElement(TABLE, id);
@@ -64,6 +67,7 @@ module.exports = function (injectedStore) {
         votar,
         deleteAuth,
         listUserVotos,
-        betweenDateNumVotos
+        betweenDateNumVotos,
+        listEmpleadosVotosForArea
     }
 }

@@ -10,6 +10,7 @@ const router = express.Router();
 router.post('/', secure('accessemployee'), votar);
 router.get('/', secure('access'), list);
 router.get('/:date1/:date2', secure('access'), listMaxVotosDate);
+router.get('/:idarea/:date1/:date2', secure('access'), listMaxVotosDateForArea);
 router.get('/:id', secure('access'), get);
 
 // Internal functions
@@ -27,7 +28,13 @@ function listMaxVotosDate(req, res, next) {
         })
         .catch(next);
 }
-
+function listMaxVotosDateForArea(req, res, next) {
+    controller.listEmpleadosVotosForArea(req.params.idarea, req.params.date1, req.params.date2)
+        .then((data) => {
+            response.success(req, res, data, 200);
+        })
+        .catch(next);
+}
 function list(req, res, next) {
     controller.listUserVotos(req.body.email, req.body.password)
         .then((data) => {

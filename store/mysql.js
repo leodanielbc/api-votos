@@ -126,7 +126,7 @@ function listUserJoinArea(table) {
             });
     });
 }
-async function userjoinrol(idUser){
+async function userjoinrol(idUser) {
     let tableUser = 'user';
     let tableRol = 'rol';
     let tableIntermedia = 'user_rol'
@@ -193,6 +193,24 @@ function listBetweenDateVotos(date1, date2) {
     });
 }
 
+function listVotosForArea(idarea, date1, date2) {
+    return new Promise((resolve, reject) => {
+        connection.query(
+            `SELECT u.*, a.*,
+            (SELECT COUNT(*) FROM voto WHERE iduser=u.id AND fecha BETWEEN '${date1}' AND '${date2}')
+            AS numberVotos FROM user u
+            INNER JOIN (SELECT id AS areaId, codeArea, nameArea FROM area) a
+            ON u.idarea = a.areaId
+            WHERE u.idarea='${idarea}'
+            ORDER BY numberVotos DESC
+            LIMIT 10`,
+            (err, data) => {
+                if (err) return reject(err);
+                resolve(data);
+            });
+    });
+}
+
 module.exports = {
     list,
     insert,
@@ -206,5 +224,6 @@ module.exports = {
     listUserVotos,
     listUserIdVotos,
     lastElement,
-    listBetweenDateVotos
+    listBetweenDateVotos,
+    listVotosForArea
 }
