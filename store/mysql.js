@@ -144,11 +144,13 @@ async function userjoinrol(idUser) {
             });
     });
 }
-function listUserVotos(table) {
+function listUserVotos(table, date1, date2) {
     return new Promise((resolve, reject) => {
         connection.query(
             `SELECT DISTINCT u.*,
-            (SELECT COUNT(*) FROM voto WHERE iduser=u.id) AS numberVotos FROM user u`,
+            (SELECT COUNT(*) FROM ${table} WHERE iduser=u.id AND fecha BETWEEN '${date1}' AND '${date2}')
+            AS numberVotos FROM user u
+            ORDER BY numberVotos DESC`,
             (err, data) => {
                 if (err) return reject(err);
                 resolve(data);

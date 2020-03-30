@@ -1,10 +1,10 @@
-const TABLE = 'voto';
 const nanoid = require('nanoid');
 const auth = require('../../../auth');
 const bcrypt = require('bcrypt');
 const moment = require('moment');
 const boom = require('@hapi/boom');
-TABLE_USER = 'user';
+const TABLE_USER = 'user';
+const TABLE = 'voto';
 
 module.exports = function (injectedStore) {
     let store = injectedStore;
@@ -12,7 +12,13 @@ module.exports = function (injectedStore) {
         store = require('../../../store/mysql');
     }
     function listUserVotos() {
-        return store.listUserVotos(TABLE_USER);
+        const date = new Date();
+        const primerDia = new Date(date.getFullYear(), date.getMonth(), 1);
+        const ultimoDia = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+        const date1 = `${date.getFullYear()}-${date.getMonth()+1}-${primerDia.getDate()}`;
+        const date2 = `${date.getFullYear()}-${date.getMonth()+1}-${ultimoDia.getDate()}`;
+        // obtiene la lista de votos de cada usuario por la fecha actual(todo el mes de dicha fecha)
+        return store.listUserVotos(TABLE, date1, date2);
     }
     function getId(id) {
         return store.listUserIdVotos(TABLE, id);
@@ -51,10 +57,10 @@ module.exports = function (injectedStore) {
             return boom.notAcceptable('No se puede votar asi mismo');
         }
     }
-    function betweenDateNumVotos(date1, date2){
+    function betweenDateNumVotos(date1, date2) {
         return store.listBetweenDateVotos(date1, date2);
     }
-    function listEmpleadosVotosForArea(idarea, date1, date2){
+    function listEmpleadosVotosForArea(idarea, date1, date2) {
         return store.listVotosForArea(idarea, date1, date2);
     }
 

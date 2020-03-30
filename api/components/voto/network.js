@@ -36,7 +36,7 @@ function listMaxVotosDateForArea(req, res, next) {
         .catch(next);
 }
 function list(req, res, next) {
-    controller.listUserVotos(req.body.email, req.body.password)
+    controller.listUserVotos()
         .then((data) => {
             response.success(req, res, data, 200);
         })
