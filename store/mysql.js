@@ -116,6 +116,16 @@ function listUserJoinArea(table) {
             });
     });
 }
+function listUserJoinArea(table) {
+    return new Promise((resolve, reject) => {
+        connection.query(
+            `SELECT u.*, a.* FROM ${table} u INNER JOIN (SELECT id AS areaId, codeArea, nameArea FROM area) a ON u.idarea=a.areaId`,
+            (err, data) => {
+                if (err) return reject(err);
+                resolve(data);
+            });
+    });
+}
 async function userjoinrol(idUser){
     let tableUser = 'user';
     let tableRol = 'rol';
@@ -168,6 +178,20 @@ function lastElement(table, iduser, iduservoto) {
             });
     });
 }
+function listBetweenDateVotos(date1, date2) {
+    return new Promise((resolve, reject) => {
+        connection.query(
+            `SELECT u.*,
+            (SELECT COUNT(*) FROM voto WHERE iduser=u.id AND fecha BETWEEN '${date1}' AND '${date2}')
+            AS numberVotos FROM user u
+            ORDER BY numberVotos DESC
+            LIMIT 10`,
+            (err, data) => {
+                if (err) return reject(err);
+                resolve(data);
+            });
+    });
+}
 
 module.exports = {
     list,
@@ -181,5 +205,6 @@ module.exports = {
     userjoinrol,
     listUserVotos,
     listUserIdVotos,
-    lastElement
+    lastElement,
+    listBetweenDateVotos
 }

@@ -1,6 +1,5 @@
 const response = require('./response');
 
-// eslint-disable-next-line no-unused-vars
 function errors(err, req, res, next){
     console.log('[error]', err);
 

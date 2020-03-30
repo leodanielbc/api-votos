@@ -9,7 +9,8 @@ module.exports = function (injectedStore) {
         store = require('../../../store/mysql');
     }
     function list() {
-        return store.list(TABLE);
+        // return store.list(TABLE);
+        return store.listUserJoinArea(TABLE);
     }
     function getId(id) {
         return store.get(TABLE, id);

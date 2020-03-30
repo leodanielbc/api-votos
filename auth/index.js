@@ -27,7 +27,7 @@ const check = {
         }
     },
     logged: function (req, next) {
-        const decoded = decodeHeader(req);
+        const decoded = decodeHeader(req, next);
         store.userjoinrol(decoded.user_id).then((data) => {
             let userValid = data.filter(item => item.namerol === 'admin');
             console.log(data);
@@ -40,7 +40,7 @@ const check = {
         });
     },
     logged_employee: function (req, next) {
-        const decoded = decodeHeader(req);
+        const decoded = decodeHeader(req, next);
         store.userjoinrol(decoded.user_id).then((data) => {
             let userValidEmployee = data.filter(item => item.namerol === 'employee');
             let userValidAdmin = data.filter(item => item.namerol === 'admin');
@@ -49,7 +49,7 @@ const check = {
             if (userValidAdmin.length === 0 && userValidEmployee.length === 0) {
                 next(boom.unauthorized());
             }
-            if(userValidEmployee.length > 0){
+            if (userValidEmployee.length > 0) {
                 return;
             } else if (userValidAdmin.length > 0) {
                 return;
@@ -60,14 +60,15 @@ const check = {
     },
 }
 
-function getToken(auth) {
+function getToken(auth, next) {
     if (!auth) {
-        throw error('Token no definido', 401);
-
+        //throw error('Token no definido', 401);
+        next(boom.unauthorized('Token no definido'));
     }
 
     if (auth.indexOf('Bearer ') === -1) {
-        throw error('Token: Formato invalido', 401);
+        // throw error('Token: Formato invalido', 401);
+        next(boom.unauthorized('Token: formato invalido'));
     }
 
     let token = auth.replace('Bearer ', '');
@@ -75,9 +76,9 @@ function getToken(auth) {
     return token;
 }
 
-function decodeHeader(req) {
+function decodeHeader(req, next) {
     const authorization = req.headers.authorization || '';
-    const token = getToken(authorization);
+    const token = getToken(authorization, next);
     const decoded = verify(token);
 
     req.user = decoded;
