@@ -1,0 +1,676 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Sistema web para registrar votos de los empleados de una empresa hacia sus compañeros",
+        "version": "1.0.0",
+        "title": "Sistema de Votación",
+        "contact": {
+            "email": "benitez.leonardo06@gmail.com"
+        }
+    },
+    "host": "sistema-de-votacion-de-empleados.now.sh",
+    "basePath": "/api",
+    "tags": [
+        {
+            "name": "user",
+            "description": "Operaciones sobre el usuario"
+        }
+    ],
+    "schemes": [
+        "https",
+        "http"
+    ],
+    "paths": {
+        "/auth/login": {
+            "get": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Autenticación del usuario",
+                "description": "",
+                "operationId": "loginUser",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Correo electrónico del empleado",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "Contraseña de la cuenta del usuario",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "type": "integer",
+                                "format": "int32",
+                                "description": "calls per hour allowed by the user"
+                            },
+                            "X-Expires-After": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "date in UTC when token expires"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid email/password supplied"
+                    }
+                }
+            }
+        },
+        "/area": {
+            "post": {
+                "tags": [
+                    "area"
+                ],
+                "summary": "Crea una area de la empresa",
+                "description": "Creación de areas",
+                "operationId": "createArea",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Area"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "area"
+                ],
+                "summary": "Retorna la lista de areas de la empresa",
+                "description": "Retorna la lista de areas registradas",
+                "operationId": "getInventory",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Area"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            }
+        },
+        "/area/{id}": {
+            "get": {
+                "tags": [
+                    "area"
+                ],
+                "summary": "Encuentra el area a traves del ID",
+                "description": "Retorna el area",
+                "operationId": "getAreaById",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id del Area de la empresa",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Area"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Id no valido"
+                    },
+                    "401": {
+                        "description": "Token no definido"
+                    },
+                    "404": {
+                        "description": "Elemento no encontrado"
+                    }
+                }
+            }
+        },
+        "/voto": {
+            "post": {
+                "tags": [
+                    "voto"
+                ],
+                "summary": "Registra votos",
+                "description": "",
+                "operationId": "placeOrder",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "order placed for purchasing the pet",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Voto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "No puedes votar dos veces"
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "voto"
+                ],
+                "summary": "Retorna la lista de usuarios con el numero de votos",
+                "description": "Filtra la lista de la fecha actual (por mes)",
+                "operationId": "getOrderById",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/VotoList"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Token no definido"
+                    }
+                }
+            }
+        },
+        "/voto/{id}": {
+            "get": {
+                "tags": [
+                    "voto"
+                ],
+                "summary": "Retorna un usuario (ID) con el numero de votos",
+                "description": "Retorna el usuario con el numero de votos",
+                "operationId": "getVotoById",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id del usuario",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/VotoList"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Id no valido"
+                    },
+                    "401": {
+                        "description": "Token no definido"
+                    },
+                    "404": {
+                        "description": "Elemento no encontrado"
+                    }
+                }
+            }
+        },
+        "/voto/{fechainicio}/{fechafin}": {
+            "get": {
+                "tags": [
+                    "voto"
+                ],
+                "summary": "Lista los usuarios mas votados",
+                "description": "Retorna los mas votados en determinada fecha",
+                "operationId": "getVotoByFecha",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "fechainicio",
+                        "in": "path",
+                        "description": "Fecha de inicio",
+                        "required": true,
+                        "type": "string",
+                        "format": "YYYY-MM-DD"
+                    },
+                    {
+                        "name": "fechafin",
+                        "in": "path",
+                        "description": "Fecha de fin",
+                        "required": true,
+                        "type": "string",
+                        "format": "YYYY-MM-DD"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/VotoList"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Fechas no validas"
+                    },
+                    "401": {
+                        "description": "Token no definido"
+                    },
+                    "404": {
+                        "description": "Elemento no encontrado"
+                    }
+                }
+            }
+        },
+        "/voto/{idarea}/{fechainicio}/{fechafin}": {
+            "get": {
+                "tags": [
+                    "voto"
+                ],
+                "summary": "Lista los usuarios mas votados por Area",
+                "description": "Retorna los mas votados en determinada fecha por AREA",
+                "operationId": "getVotoByArea",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "idarea",
+                        "in": "path",
+                        "description": "Id del area de la empresa",
+                        "required": true,
+                        "type": "string",
+                        "format": "string"
+                    },
+                    {
+                        "name": "fechainicio",
+                        "in": "path",
+                        "description": "Fecha de inicio",
+                        "required": true,
+                        "type": "string",
+                        "format": "YYYY-MM-DD"
+                    },
+                    {
+                        "name": "fechafin",
+                        "in": "path",
+                        "description": "Fecha de fin",
+                        "required": true,
+                        "type": "string",
+                        "format": "YYYY-MM-DD"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/VotoListArea"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Fechas no validas"
+                    },
+                    "401": {
+                        "description": "Token no definido"
+                    },
+                    "404": {
+                        "description": "Elemento no encontrado"
+                    }
+                }
+            }
+        },
+        "/user": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Crea un usuario",
+                "description": "Se crea el usuario con el su respectivo rol (id) y area a que pertenece (idarea)",
+                "operationId": "createUser",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Usuario creado",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Lista de usuarios",
+                "description": "Lista todos los usuarios",
+                "operationId": "listUser",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/UserId"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/{id}": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Encuentra un usuario a traves del id",
+                "description": "El id es un String (generado con nanoid)",
+                "operationId": "getUserById",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id del usuario que necesita",
+                        "required": true,
+                        "type": "string",
+                        "maximum": 10
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/UserId"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "petstore_auth": {
+            "type": "oauth2",
+            "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
+            "flow": "implicit",
+            "scopes": {
+                "write:pets": "modify pets in your account",
+                "read:pets": "read your pets"
+            }
+        },
+        "api_key": {
+            "type": "apiKey",
+            "name": "api_key",
+            "in": "header"
+        }
+    },
+    "definitions": {
+        "Voto": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "iduser": {
+                    "type": "string"
+                },
+                "comentario": {
+                    "type": "string"
+                },
+                "iduservoto": {
+                    "type": "string"
+                }
+            },
+            "xml": {
+                "name": "Votar"
+            }
+        },
+        "User": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "idarea": {
+                    "type": "string"
+                },
+                "idrol": {
+                    "type": "string"
+                }
+            },
+            "xml": {
+                "name": "User"
+            }
+        },
+        "UserId": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "idarea": {
+                    "type": "string"
+                }
+            },
+            "xml": {
+                "name": "User"
+            }
+        },
+        "Rol": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "namerol": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "xml": {
+                "name": "Rol"
+            }
+        },
+        "Area": {
+            "type": "object",
+            "required": [
+                "name",
+                "photoUrls"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "codeArea": {
+                    "type": "string",
+                    "example": "doggie"
+                },
+                "nameArea": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "xml": {
+                "name": "Area"
+            }
+        },
+        "VotoList": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "lastname": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "idarea": {
+                    "type": "string"
+                },
+                "numberVotos": {
+                    "type": "integer"
+                }
+            },
+            "xml": {
+                "name": "Area"
+            }
+        },
+        "VotoListArea": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "lastname": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "idarea": {
+                    "type": "string"
+                },
+                "areaId": {
+                    "type": "string"
+                },
+                "codeArea": {
+                    "type": "string"
+                },
+                "nameArea": {
+                    "type": "string"
+                },
+                "numberVotos": {
+                    "type": "integer"
+                }
+            },
+            "xml": {
+                "name": "Area"
+            }
+        },
+        "ApiResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "format": "int"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
